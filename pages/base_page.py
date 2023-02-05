@@ -31,4 +31,4 @@ class BasePage:
         return wait(self.driver, timeout).until(EC.element_to_be_clickable(locator))
 
     def go_to_element(self, element):   # скроллит к нужному элементу
-        self.driver.execute_script("argument[0].scrollIntoView;", element)    #execute_script('') - метод, позволяющий запускать скрипты. "argument[0].scrollIntoView;" - стандартное
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)    #execute_script('') - метод, позволяющий запускать скрипты. "arguments[0].scrollIntoView();" - стандартное

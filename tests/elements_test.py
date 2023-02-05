@@ -1,6 +1,7 @@
 import time
 
-from pages.elements_page import TextBoxPage
+from pages.elements_page import TextBoxPage, CheckBoxPage
+
 
 class TestElements:
     class TestTextBox:
@@ -9,10 +10,23 @@ class TestElements:
             text_box_page = TextBoxPage(driver, "https://demoqa.com/text-box")
             text_box_page.open()
 
-
             full_name, email, current_address, permanent_address = text_box_page.fill_all_fields()  #вводимые значения
             output_name, output_email, output_current_address, output_permanent_address = text_box_page.check_field_form()  #значения табличные на выходе
             assert full_name == output_name, "the full name is not match" # через запятую указывается комментарий, если вдруг произойдет ошибка    # расписано все по отдельности для того, чтобы если возникнет баг, в отчете было точно написано где именно в коде
             assert email == output_email, "the email is not match"
             assert current_address == output_current_address, "the current_address is not match"
             assert permanent_address == permanent_address, "the permanent_address is not match"
+
+    class TestCheckBox:
+
+        def test_check_box(self, driver):
+            check_box_page = CheckBoxPage(driver, 'https://demoqa.com/checkbox')
+            check_box_page.open()
+            check_box_page.open_full_list()
+            check_box_page.click_random_checkbox()
+            input_checkbox = check_box_page.get_checked_checkboxes()
+            output_result = check_box_page.get_output_result()
+            print(input_checkbox)
+            print(output_result)
+            assert input_checkbox == output_result, 'checkboxes have not been selected'
+
