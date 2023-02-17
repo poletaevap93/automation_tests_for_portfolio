@@ -2,7 +2,7 @@ import random
 import time
 from selenium.webdriver.common.by import By
 from generator.generator import generated_person
-from locators.elements_page_locators import TextBoxLocators, CheckBoxLocators
+from locators.elements_page_locators import TextBoxLocators, CheckBoxLocators, RadioButtonLocators
 from pages.base_page import BasePage
 
 
@@ -64,5 +64,24 @@ class CheckBoxPage(BasePage):
         for item in result_list:
             data.append(item.text)
         return str(data).replace(' ', '').lower() # тоже форматирую
+
+
+class RadioButtonPage(BasePage):
+    locators = RadioButtonLocators()
+
+    def click_on_the_radio_button(self, choice): # создаю словарь
+        choices = {'yes': self.locators.YES_RADIOBUTTON,   # прям тут на месте ключа указываю локаторы
+        'Impressive': self.locators.IMPRESSIVE_RADIOBUTTON,
+        'no': self.locators.NO_RADIOBUTTON}
+
+        self.element_is_visible(choices[choice]).click()
+
+    def get_output_result(self):   # получаю текст, который подсвечивается при нажатии на баттон
+        return self.element_is_present(self.locators.OUTPUT_RESULT).text
+
+
+
+
+
 
 
