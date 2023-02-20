@@ -113,6 +113,17 @@ class WebTablePage(BasePage):   # работа с таблицей
             data.append(item.text.splitlines())   # добавляю в буфер строки из таблицы, разделяя на разные слова
         return data
 
+    def search_some_person(self, key_word):  # функция поиска какого либо человека в таблице
+        self.element_is_visible(self.locators.SEARCH_INPUT).send_keys(key_word)
+
+    def check_search_person(self):  # проверка найденного в поиске человека, что он есть по итогу в таблице и совпадает. Поиск будет по gjzdkz.otqcz функции удаления
+        delete_button = self.element_is_present(self.locators.DELETE_BUTTON)
+        row = delete_button.find_element(By.XPATH, self.locators.ROW_PARENT)  # поиск в родительской строке через функцию удаления
+        return row.text.splitlines()
+
+
+
+
 
 
 
