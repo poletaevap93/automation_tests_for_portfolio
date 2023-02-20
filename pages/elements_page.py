@@ -103,7 +103,17 @@ class WebTablePage(BasePage):   # работа с таблицей
             self.element_is_visible(self.locators.DEPARTMENT_INPUT).send_keys(department)
             self.element_is_visible(self.locators.SUBMIT).click()
             count -=1
-            return firstname, lastname, email, age, salary, department
+            return [firstname, lastname,  str(age), email, str(salary), department]  # чтобы выводилось в листе и все значения в строках str
+
+    def check_new_added_person(self):  # метод проверки правильности добавления человека в таблицу
+
+        people_list = self.element_are_presents(self.locators.FULL_PEOPLE_LIST)
+        data = []
+        for item in people_list:
+            data.append(item.text.splitlines())   # добавляю в буфер строки из таблицы, разделяя на разные слова
+        return data
+
+
 
 
 
