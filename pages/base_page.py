@@ -1,6 +1,6 @@
 # тут создаю методы, которые будут облегчать работу с остальными страницами
 # родительский класс для остальных страниц
-
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait as wait  # импортирую
 from selenium.webdriver.support import expected_conditions as EC  # импортирую
 
@@ -32,3 +32,13 @@ class BasePage:
 
     def go_to_element(self, element):   # скроллит к нужному элементу
         self.driver.execute_script("arguments[0].scrollIntoView();", element)    #execute_script('') - метод, позволяющий запускать скрипты. "arguments[0].scrollIntoView();" - стандартное
+
+    def action_double_click(self, element):  # двойной клик
+        action = ActionChains(self.driver)  # библиотека для нажатия кнопки, колесиком и тд, все по мышке
+        action.double_click(element)
+        action.perform() # обязательная оканчательная фраза, чтобы все работало
+
+    def action_right_click(self, element):  # клие правой кнопкой
+        action = ActionChains(self.driver)  # библиотека для нажатия кнопки, колесиком и тд, все по мышке
+        action.context_click(element)
+        action.perform()  # обязательная оканчательная фраза, чтобы все работало
