@@ -1,7 +1,7 @@
 import random
 import time
 
-from pages.elements_page import TextBoxPage, CheckBoxPage, RadioButtonPage, WebTablePage, ButtonsPage
+from pages.elements_page import TextBoxPage, CheckBoxPage, RadioButtonPage, WebTablePage, ButtonsPage, LinksPage
 
 
 class TestElements:
@@ -101,6 +101,19 @@ class TestElements:
             assert right == "You have done a right click"
             assert click == "You have done a dynamic click"
 
+    class TestLinksPage:  # метод проверки открывания ссылок (рабочая и битая)
+
+        def test_check_link(self, driver):  # проверка рабочей ссылки
+            links_page = LinksPage(driver, 'https://demoqa.com/links')
+            links_page.open()
+            href_link, current_url = links_page.check_new_tab_simple_link()
+            print(href_link, current_url)
+
+        def test_broken_link(self, driver):  # тест битой ссылки, с 400 кодом ответа
+            links_page = LinksPage(driver, 'https://demoqa.com/links')
+            links_page.open()
+            response_code = links_page.check_broken_link("https://demoqa.com/bad-request")
+            assert response_code == 400
 
 
 

@@ -1,9 +1,11 @@
 import random
 import time
+
+import requests
 from selenium.webdriver.common.by import By
 from generator.generator import generated_person
 from locators.elements_page_locators import TextBoxLocators, CheckBoxLocators, RadioButtonLocators, WebTableLocators, \
-    ButtonsPageLocators
+    ButtonsPageLocators, LinksPageLocators
 from pages.base_page import BasePage
 
 
@@ -155,7 +157,7 @@ class WebTablePage(BasePage):   # работа с таблицей
 
 
 
-class ButtonsPage(BasePage):   # 3 кнопки с двойным нажатием, правой, и обычный
+class ButtonsPage(BasePage):   # 3 кнопки: с двойным нажатием, правой, и обычный
 
     locators = ButtonsPageLocators()
 
@@ -175,6 +177,31 @@ class ButtonsPage(BasePage):   # 3 кнопки с двойным нажатие
 
     def check_clicked_on_the_button(self, element):   # проверка текста, который появляется после нажатия на кнопки
         return self.element_is_present(element).text
+
+
+class LinksPage (BasePage):    # проверка ссылок на странице
+    locators = LinksPageLocators()
+
+    def check_new_tab_simple_link(self):
+        simple_link = self.element_is_visible(self.locators.SIMPLE_LINK)
+        link_href = simple_link.get_attribute('href')
+        request = requests.get(link_href)  # импорт спец библиотеки для возможности отправки запроса по нужной ссылке
+        if request.status_code == 200:
+            simple_link.click()
+            self.driver.switch_to.window(self.driver.window_handles[1]) # смысл такой: драйвер, переключи свое внимание на окно с индексом 1, и он переключает на новую вкладку, которая окрывается после клика
+            url = self.driver.current_url   # эту ссылку вытягиваю из открывшегося окна, чтобы можно было сравнить
+            return link_href, url
+        else:
+            return request.status_code, link_href
+
+    def check_broken_link(self, url):   # проверка поломанной ссылки
+        request = requests.get(url)
+        if request.status_code == 200:
+            self.element_is_present(self.locators.BAD_REQUEST).click()
+        else:
+            return request.status_code
+
+
 
 
 

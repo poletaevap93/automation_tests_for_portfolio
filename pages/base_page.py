@@ -42,3 +42,5 @@ class BasePage:
         action = ActionChains(self.driver)  # библиотека для нажатия кнопки, колесиком и тд, все по мышке
         action.context_click(element)
         action.perform()  # обязательная оканчательная фраза, чтобы все работало
+
+
