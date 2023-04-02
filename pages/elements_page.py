@@ -1,11 +1,12 @@
+import os
 import random
 import time
 
 import requests
 from selenium.webdriver.common.by import By
-from generator.generator import generated_person
+from generator.generator import generated_person, generated_file
 from locators.elements_page_locators import TextBoxLocators, CheckBoxLocators, RadioButtonLocators, WebTableLocators, \
-    ButtonsPageLocators, LinksPageLocators
+    ButtonsPageLocators, LinksPageLocators, UploadAndDownloadPageLocators
 from pages.base_page import BasePage
 
 
@@ -200,6 +201,23 @@ class LinksPage (BasePage):    # проверка ссылок на страни
             self.element_is_present(self.locators.BAD_REQUEST).click()
         else:
             return request.status_code
+
+class UploadAndDownloadPage (BasePage):
+    locators = UploadAndDownloadPageLocators()
+
+    def upload_file(self):
+        file_name, path = generated_file()# создаю файл через генератор
+        self.element_is_present(self.locators.UPLOAD_FILE).send_keys(path) # пихаю созданный файл на страницу
+        os.remove(path)  # сразу удаляю рандомно созданный файл
+        text = self.element_is_present(self.locators.UPLOADED_RESULT).text #  сохраняю название загруженного на страницу рандомного файла
+        return file_name.split("\\")[-1], text.split("\\")[-1]  # тут с помощью регулярки я вытаскиваю и возвращаю только последнюю часть названия созданного в моей папке рандомного файла и часть названия, которое отобразилось на странице после загрузки (т.к. их пути не совпадают полностью). Разбиваю по слешам и с помощью [-1] достаю именно послее значение
+
+
+
+
+
+    #def download_file(self):
+
 
 
 

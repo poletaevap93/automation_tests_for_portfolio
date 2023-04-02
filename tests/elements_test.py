@@ -1,7 +1,8 @@
 import random
 import time
 
-from pages.elements_page import TextBoxPage, CheckBoxPage, RadioButtonPage, WebTablePage, ButtonsPage, LinksPage
+from pages.elements_page import TextBoxPage, CheckBoxPage, RadioButtonPage, WebTablePage, ButtonsPage, LinksPage, \
+    UploadAndDownloadPage
 
 
 class TestElements:
@@ -114,6 +115,20 @@ class TestElements:
             links_page.open()
             response_code = links_page.check_broken_link("https://demoqa.com/bad-request")
             assert response_code == 400
+
+    class TestUploadAndDownload:  # тест скачивания и загрузки файла
+
+        def test_upload_file(self, driver):
+            upload_download_page = UploadAndDownloadPage(driver, 'https://demoqa.com/upload-download')
+            upload_download_page.open()
+            file_name, result = upload_download_page.upload_file() # в обе переменные (т.к. upload_file() возвращает 2 переменные) записываю результат выполнения
+            assert file_name == result
+
+       # def test_download_file(self, driver):
+       #     links_page = UploadAndDownloadPage(driver, 'https://demoqa.com/upload-download')
+         #   links_page.open()
+         #   pass
+
 
 
 
