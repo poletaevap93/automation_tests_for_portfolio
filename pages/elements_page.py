@@ -4,10 +4,11 @@ import random
 import time
 
 import requests
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from generator.generator import generated_person, generated_file
 from locators.elements_page_locators import TextBoxLocators, CheckBoxLocators, RadioButtonLocators, WebTableLocators, \
-    ButtonsPageLocators, LinksPageLocators, UploadAndDownloadPageLocators
+    ButtonsPageLocators, LinksPageLocators, UploadAndDownloadPageLocators, DynamicPropertiesPageLocators
 from pages.base_page import BasePage
 
 
@@ -224,6 +225,33 @@ class UploadAndDownloadPage (BasePage):
             f.close() #закрываем файл
         os.remove(path_name_file)  # удаляю созданный файл из проекта
         return check_file
+
+class DynamicPropertiesPage(BasePage): # динамические изменения на странице
+
+    locators = DynamicPropertiesPageLocators()
+
+    def check_enable_button(self): # проверка на кликабельность кнопки через 5 сек
+        try:
+            self.element_is_clickable(self.locators.ENABLE_BUTTON)  # тут по умолчанию стоит 5 секунд, прописано в basepage. Поэтому проверяю, что через 5 сек должно все работать, иначе ошибка
+        except TimeoutException:
+            return False
+        return True
+
+
+    def check_changed_of_color(self):  # изменение цвета текста у кнопки через 5 сек
+        color_button = self.element_is_present(self.locators.COLOR_CHANGE_BUTTON)
+        color_button_before = color_button.value_of_css_property("color")  # метод позволяет вытащить цвет
+        time.sleep(5)
+        color_button_after = color_button.value_of_css_property("color")
+        return color_button_before, color_button_after
+
+    def check_appear_button(self):  # проверка появления кнопки через 5 сек
+        try:
+            self.element_is_visible(self.locators.VISIBLE_AFTER_BUTTON) # тут по умолчанию стоит 5 секунд, прописано в basepage
+        except TimeoutException:
+            return False
+        return True
+
 
 
 

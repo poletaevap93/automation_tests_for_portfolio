@@ -2,7 +2,7 @@ import random
 import time
 
 from pages.elements_page import TextBoxPage, CheckBoxPage, RadioButtonPage, WebTablePage, ButtonsPage, LinksPage, \
-    UploadAndDownloadPage
+    UploadAndDownloadPage, DynamicPropertiesPage
 
 
 class TestElements:
@@ -129,6 +129,28 @@ class TestElements:
             upload_download_page.open()
             check = upload_download_page.download_file()
             assert check is True, "the file has not been downloaded"   # проверка, правда ли, что происходит скачивание нужного файла
+
+    class TestDynamicPropertiesPage: # динамические изменения на странице
+
+        def test_enable_button(self, driver):
+            dynamic_properties_page = DynamicPropertiesPage(driver, "https://demoqa.com/dynamic-properties")
+            dynamic_properties_page.open()
+            enable = dynamic_properties_page.check_enable_button()
+            assert enable is True, "button did not enable after 5 sec" # проверка, что кнопка действительно кнопка станет кликабельна через 5 сек
+
+        def test_dynamic_properties(self, driver):
+            dynamic_properties_page= DynamicPropertiesPage(driver, "https://demoqa.com/dynamic-properties")
+            dynamic_properties_page.open()
+            color_before, color_after = dynamic_properties_page.check_changed_of_color() # две переменные, т.к. метод возвращает тоже 2 значения
+            assert color_after != color_before, "colors have not been changed"  # проверяю, что цвета по итогу разные
+
+        def test_appear_button(self, driver):
+            dynamic_properties_page = DynamicPropertiesPage(driver, "https://demoqa.com/dynamic-properties")
+            dynamic_properties_page.open()
+            appear = dynamic_properties_page.check_appear_button()
+            assert appear is True, "button did not appear after 5 sec"  # проверка, что кнопка действительно появляется через 5 сек
+
+
 
 
 
