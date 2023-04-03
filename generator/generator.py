@@ -19,3 +19,10 @@ def generated_person():
         current_address= faker_ru.address(),
         permanent_address= faker_ru.address(),
     )
+
+def generated_file():  # для генерации файлов рандомных
+    path = rf"D:\pythonProject\automation_tests_for_portfolio\filetest{random.randint(0,999)}.txt"  # указываю абсолютный путь до места генерации (временного) файла. Указываю просто диск С. r - регулярное выр-е
+    file = open(path, "w+")  # открывается файл.  w+ означает открыть файл для записи
+    file.write(f"HelloWorld{random.randint(0,999)}")  # записываю в файл рандомное значение
+    file.close()
+    return file.name, path   # возвращаю название файла с помощью функции file.name и путь

@@ -1,9 +1,14 @@
+import base64
+import os
 import random
 import time
+
+import requests
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from generator.generator import generated_person
+from generator.generator import generated_person, generated_file
 from locators.elements_page_locators import TextBoxLocators, CheckBoxLocators, RadioButtonLocators, WebTableLocators, \
-    ButtonsPageLocators
+    ButtonsPageLocators, LinksPageLocators, UploadAndDownloadPageLocators, DynamicPropertiesPageLocators
 from pages.base_page import BasePage
 
 
@@ -155,7 +160,7 @@ class WebTablePage(BasePage):   # работа с таблицей
 
 
 
-class ButtonsPage(BasePage):   # 3 кнопки с двойным нажатием, правой, и обычный
+class ButtonsPage(BasePage):   # 3 кнопки: с двойным нажатием, правой, и обычный
 
     locators = ButtonsPageLocators()
 
@@ -175,6 +180,83 @@ class ButtonsPage(BasePage):   # 3 кнопки с двойным нажатие
 
     def check_clicked_on_the_button(self, element):   # проверка текста, который появляется после нажатия на кнопки
         return self.element_is_present(element).text
+
+
+class LinksPage (BasePage):    # проверка ссылок на странице
+    locators = LinksPageLocators()
+
+    def check_new_tab_simple_link(self):
+        simple_link = self.element_is_visible(self.locators.SIMPLE_LINK)
+        link_href = simple_link.get_attribute('href')
+        request = requests.get(link_href)  # импорт спец библиотеки для возможности отправки запроса по нужной ссылке
+        if request.status_code == 200:
+            simple_link.click()
+            self.driver.switch_to.window(self.driver.window_handles[1]) # смысл такой: драйвер, переключи свое внимание на окно с индексом 1, и он переключает на новую вкладку, которая окрывается после клика
+            url = self.driver.current_url   # эту ссылку вытягиваю из открывшегося окна, чтобы можно было сравнить
+            return link_href, url
+        else:
+            return request.status_code, link_href
+
+    def check_broken_link(self, url):   # проверка поломанной ссылки
+        request = requests.get(url)
+        if request.status_code == 200:
+            self.element_is_present(self.locators.BAD_REQUEST).click()
+        else:
+            return request.status_code
+
+class UploadAndDownloadPage (BasePage):
+    locators = UploadAndDownloadPageLocators()
+
+    def upload_file(self):
+        file_name, path = generated_file()# создаю файл через генератор
+        self.element_is_present(self.locators.UPLOAD_FILE).send_keys(path) # пихаю созданный файл на страницу
+        os.remove(path)  # сразу удаляю рандомно созданный файл
+        text = self.element_is_present(self.locators.UPLOADED_RESULT).text #  сохраняю название загруженного на страницу рандомного файла
+        return file_name.split("\\")[-1], text.split("\\")[-1]  # тут с помощью регулярки я вытаскиваю и возвращаю только последнюю часть названия созданного в моей папке рандомного файла и часть названия, которое отобразилось на странице после загрузки (т.к. их пути не совпадают полностью). Разбиваю по слешам и с помощью [-1] достаю именно послее значение
+
+    def download_file(self):
+        link = self.element_is_present(self.locators.DOWNLOAD_FILE).get_attribute("href")# чтобы скачать картинку, снчала получаю содержимое атрибута href, т.е ссылку c сайта
+        link_b = base64.b64decode(link)  # тут с помощью библиотеки base64  разбиваю ссылку на байты.
+        path_name_file = rf"D:\pythonProject\automation_tests_for_portfolio\filetest{random.randint(0,999)}.jpeg"  # создается файл пустышка в проекте, в который в дальнейшем запишется скаченная картинка в виде байтов
+        with open(path_name_file, "wb+") as f:
+            offset = link_b.find(b'\xff\xd8')  # тут я обрезаю скаченную ссылку (уже разбитую на байты) до той части, которая нужна, именно сами полезные байты остаются (без типа, кодировки и тд). Чисто код самого изображения
+            f.write(link_b[offset:])  # здесь я записываю ссылку начиная с найденных выше значений (тут и просиходит обрезка, запись без лишнего)
+            check_file = os.path.exists(path_name_file)   # проверяю что файл, который только создался, что он существует и лежит по этому пути rf"D:\pythonProject\automation_tests_for_portfolio\filetest{random.randint(0,999)}.jpeg"
+            f.close() #закрываем файл
+        os.remove(path_name_file)  # удаляю созданный файл из проекта
+        return check_file
+
+class DynamicPropertiesPage(BasePage): # динамические изменения на странице
+
+    locators = DynamicPropertiesPageLocators()
+
+    def check_enable_button(self): # проверка на кликабельность кнопки через 5 сек
+        try:
+            self.element_is_clickable(self.locators.ENABLE_BUTTON)  # тут по умолчанию стоит 5 секунд, прописано в basepage. Поэтому проверяю, что через 5 сек должно все работать, иначе ошибка
+        except TimeoutException:
+            return False
+        return True
+
+
+    def check_changed_of_color(self):  # изменение цвета текста у кнопки через 5 сек
+        color_button = self.element_is_present(self.locators.COLOR_CHANGE_BUTTON)
+        color_button_before = color_button.value_of_css_property("color")  # метод позволяет вытащить цвет
+        time.sleep(5)
+        color_button_after = color_button.value_of_css_property("color")
+        return color_button_before, color_button_after
+
+    def check_appear_button(self):  # проверка появления кнопки через 5 сек
+        try:
+            self.element_is_visible(self.locators.VISIBLE_AFTER_BUTTON) # тут по умолчанию стоит 5 секунд, прописано в basepage
+        except TimeoutException:
+            return False
+        return True
+
+
+
+
+
+
 
 
 
