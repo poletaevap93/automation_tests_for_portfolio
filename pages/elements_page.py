@@ -1,3 +1,4 @@
+import base64
 import os
 import random
 import time
@@ -212,11 +213,19 @@ class UploadAndDownloadPage (BasePage):
         text = self.element_is_present(self.locators.UPLOADED_RESULT).text #  сохраняю название загруженного на страницу рандомного файла
         return file_name.split("\\")[-1], text.split("\\")[-1]  # тут с помощью регулярки я вытаскиваю и возвращаю только последнюю часть названия созданного в моей папке рандомного файла и часть названия, которое отобразилось на странице после загрузки (т.к. их пути не совпадают полностью). Разбиваю по слешам и с помощью [-1] достаю именно послее значение
 
+    def download_file(self):
+        link = self.element_is_present(self.locators.DOWNLOAD_FILE).get_attribute("href")# чтобы скачать картинку, снчала получаю содержимое атрибута href, т.е ссылку c сайта
+        link_b = base64.b64decode(link)  # тут с помощью библиотеки base64  разбиваю ссылку на байты.
+        path_name_file = rf"D:\pythonProject\automation_tests_for_portfolio\filetest{random.randint(0,999)}.jpeg"  # создается файл пустышка в проекте, в который в дальнейшем запишется скаченная картинка в виде байтов
+        with open(path_name_file, "wb+") as f:
+            offset = link_b.find(b'\xff\xd8')  # тут я обрезаю скаченную ссылку (уже разбитую на байты) до той части, которая нужна, именно сами полезные байты остаются (без типа, кодировки и тд). Чисто код самого изображения
+            f.write(link_b[offset:])  # здесь я записываю ссылку начиная с найденных выше значений (тут и просиходит обрезка, запись без лишнего)
+            check_file = os.path.exists(path_name_file)   # проверяю что файл, который только создался, что он существует и лежит по этому пути rf"D:\pythonProject\automation_tests_for_portfolio\filetest{random.randint(0,999)}.jpeg"
+            f.close() #закрываем файл
+        os.remove(path_name_file)  # удаляю созданный файл из проекта
+        return check_file
 
 
-
-
-    #def download_file(self):
 
 
 

@@ -122,12 +122,13 @@ class TestElements:
             upload_download_page = UploadAndDownloadPage(driver, 'https://demoqa.com/upload-download')
             upload_download_page.open()
             file_name, result = upload_download_page.upload_file() # в обе переменные (т.к. upload_file() возвращает 2 переменные) записываю результат выполнения
-            assert file_name == result
+            assert file_name == result, "the file has not been uploaded"
 
-       # def test_download_file(self, driver):
-       #     links_page = UploadAndDownloadPage(driver, 'https://demoqa.com/upload-download')
-         #   links_page.open()
-         #   pass
+        def test_download_file(self, driver):   # cуть: картинка закодирована в ссылке, на сайте. Я этот код беру, преобразую, записываю в нужном виде в файл пустышку и проверяю, создалась ли эта картинка у меня в проекте или нет
+            upload_download_page = UploadAndDownloadPage(driver, 'https://demoqa.com/upload-download')
+            upload_download_page.open()
+            check = upload_download_page.download_file()
+            assert check is True, "the file has not been downloaded"   # проверка, правда ли, что происходит скачивание нужного файла
 
 
 

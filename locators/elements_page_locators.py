@@ -76,3 +76,5 @@ class LinksPageLocators:
 class UploadAndDownloadPageLocators:
     UPLOAD_FILE = (By.CSS_SELECTOR, "input[id='uploadFile']")
     UPLOADED_RESULT = (By.CSS_SELECTOR, "p[id='uploadedFilePath']")  # название того файла, который загрузил на страницу
+
+    DOWNLOAD_FILE = (By.CSS_SELECTOR, "a[id='downloadButton']")
