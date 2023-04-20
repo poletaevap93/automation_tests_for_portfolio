@@ -2,7 +2,7 @@ import random
 import time
 
 from locators.alerts_frame_windows_locators import BrowserWindowsPageLocators, AlertsPageLocators
-from locators.elements_page_locators import FramesPageLocators, NestedFramesPageLocators
+from locators.elements_page_locators import FramesPageLocators, NestedFramesPageLocators, ModalDialodsPageLocators
 from pages.base_page import BasePage
 
 
@@ -94,3 +94,19 @@ class NestedFramesPage(BasePage):  # тестирование вложенных
         self.driver.switch_to.frame(child_frame)  # переключатель
         child_text = self.element_is_present(self.locators.CHILD_TEXT).text
         return parent_text, child_text
+
+class ModalDialogsPage(BasePage):  # тестирование модульных всплывающих окон (маленького и большого). Без использования переключателя switch_to
+
+    locators = ModalDialodsPageLocators()
+
+    def check_modal_dialogs(self):
+        self.element_is_visible(self.locators.SMALL_MODAL_BUTTON).click()
+        title_small = self.element_is_visible(self.locators.SMALL_MODAL_TITLE).text # вытаскиваю заголовок окна
+        text_small = self.element_is_visible(self.locators.SMALL_MODAL_TEXT).text # вытаскиваю текст внутри окна
+        self.element_is_visible(self.locators.SMALL_MODAL_CLOSE_BUTTON).click()   # закрываю окно
+
+        self.element_is_visible(self.locators.LARGE_MODAL_BUTTON).click()
+        title_large = self.element_is_visible(self.locators.LARGE_MODAL_TITLE).text  # вытаскиваю заголовок окна
+        text_large = self.element_is_visible(self.locators.LARGE_MODAL_TEXT).text  # вытаскиваю текст внутри окна
+        self.element_is_visible(self.locators.LARGE_MODAL_CLOSE_BUTTON).click()
+        return [title_small, len(text_small)], [title_large, len(text_large)]  # len(text_large) - беру количество символов в тексте

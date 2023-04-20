@@ -22,7 +22,7 @@ class BasePage:
     def element_is_present(self, locator, timeout=5):  # чтобы найти элемент который представлен на странице (не обязательно в поле видимости, можно в DOMе)...и чтобы не скроллить страницу
         return wait(self.driver, timeout).until(EC.presence_of_element_located(locator))
 
-    def element_are_presents(self, locator, timeout=5):  # чтобы найти элемент который представлен на странице (не обязательно в поле видимости, можно в DOMе)...и чтобы не скроллить страницу
+    def elements_are_present(self, locator, timeout=5):  # чтобы найти элемент который представлен на странице (не обязательно в поле видимости, можно в DOMе)...и чтобы не скроллить страницу
         return wait(self.driver, timeout).until(EC.presence_of_all_elements_located(locator))
 
     def element_is_not_visible(self, locator, timeout=5):  # чтобы элемент был невидимый
