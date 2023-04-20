@@ -1,7 +1,7 @@
 # класс для генерации рандомных значений
 import random
 
-from data.data import Person
+from data.data import Person, Color
 from faker import Faker   # импортирую библиотеку для рандомного заполнения полей в методе ниже
 
 faker_ru = Faker('ru_RU') #обьязательно прописываю, указывая язык
@@ -26,3 +26,7 @@ def generated_file():  # для генерации файлов рандомны
     file.write(f"HelloWorld{random.randint(0,999)}")  # записываю в файл рандомное значение
     file.close()
     return file.name, path   # возвращаю название файла с помощью функции file.name и путь
+
+def generated_color(): # для подстановки разных цветов
+    yield Color(
+        color_name= ["Red", "Blue", "Green", "Yellow", "Purple","Black", "White", "Voilet", "Indigo", "Magenta", "Aqua"])

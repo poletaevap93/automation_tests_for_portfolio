@@ -59,7 +59,7 @@ class CheckBoxPage(BasePage):
                 break
 
     def get_checked_checkboxes(self):  # получить выбранные чекбоксы
-        checked_list = self.element_are_presents(self.locators.CHECKED_ITEMS)
+        checked_list = self.elements_are_present(self.locators.CHECKED_ITEMS)
         data = []  # пустой массив, выполняющий роль буфера, в который будут складываться нужные,выборочные данные
         for box in checked_list:
             title_item = box.find_element(By.XPATH, self.locators.TITLE_ITEM)
@@ -68,7 +68,7 @@ class CheckBoxPage(BasePage):
                                                                      '').lower()  # Форматирую строку,чтоб был одинаковый текст. str(data) - оборачивание массива в строку, чтобы применить replace. Удаляю doc, точки и пробелы. Применяю lower чтобы убрать заглавные
 
     def get_output_result(self):  # метод получения списка отображаемых названий выбранных чекбоксов
-        result_list = self.element_are_presents(self.locators.OUTPUT_RESULT)
+        result_list = self.elements_are_present(self.locators.OUTPUT_RESULT)
         data = []  # пустой массив, выполняющий роль буфера
         for item in result_list:
             data.append(item.text)
@@ -117,7 +117,7 @@ class WebTablePage(BasePage):  # работа с таблицей
 
     def check_new_added_person(self):  # метод проверки правильности добавления человека в таблицу
 
-        people_list = self.element_are_presents(self.locators.FULL_PEOPLE_LIST)
+        people_list = self.elements_are_present(self.locators.FULL_PEOPLE_LIST)
         data = []
         for item in people_list:
             data.append(item.text.splitlines())  # добавляю в буфер строки из таблицы, разделяя на разные слова
@@ -161,7 +161,7 @@ class WebTablePage(BasePage):  # работа с таблицей
         return data
 
     def check_count_rows(self):  # метод проверки количества строк
-        list_rows = self.element_are_presents(self.locators.FULL_PEOPLE_LIST)
+        list_rows = self.elements_are_present(self.locators.FULL_PEOPLE_LIST)
         return len(list_rows)  # возвращаю количество, длинну списка
 
 
